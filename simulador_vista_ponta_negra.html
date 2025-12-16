@@ -661,7 +661,9 @@
                 const unidade = unidades.find(u => u.id === unidadeId);
                 const entradaPadrao = Math.round(unidade.preco * 0.1);
                 document.getElementById('entrada').value = entradaPadrao;
-                document.getElementById('percentSlider').value = 10;
+                const slider = document.getElementById('percentSlider');
+                slider.value = 10;
+                slider.style.setProperty('--range-percent', '10%');
                 document.getElementById('percentLabel').textContent = '10%';
                 calcular();
             }
@@ -673,7 +675,10 @@
             if (unidadeId) {
                 const unidade = unidades.find(u => u.id === unidadeId);
                 const pct = (entrada / unidade.preco) * 100;
-                document.getElementById('percentSlider').value = Math.min(pct, 50);
+                const sliderPct = Math.min(pct, 50);
+                const slider = document.getElementById('percentSlider');
+                slider.value = sliderPct;
+                slider.style.setProperty('--range-percent', sliderPct + '%');
                 document.getElementById('percentLabel').textContent = pct.toFixed(1) + '%';
             }
             calcular();
@@ -688,6 +693,8 @@
                 document.getElementById('entrada').value = Math.round(entrada);
                 document.getElementById('percentLabel').textContent = pct + '%';
             }
+            // Update slider background gradient
+            e.target.style.setProperty('--range-percent', pct + '%');
             calcular();
         });
 
