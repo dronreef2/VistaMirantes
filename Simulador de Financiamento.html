@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Financiamento - Vista Ponta Negra</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #38bdf8;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #cbd5e1;
+            font-size: 1.1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 1024px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .panel h2 {
+            color: #38bdf8;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #38bdf8;
+            padding-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #cbd5e1;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            background-color: #0f172a;
+            color: #f1f5f9;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .slider-container {
+            margin-bottom: 25px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(to right, #38bdf8 0%, #38bdf8 var(--range-percent), #334155 var(--range-percent), #334155 100%);
+            -webkit-appearance: none;
+            appearance: none;
+            padding: 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #38bdf8;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(56, 189, 248, 0.4);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #38bdf8;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(56, 189, 248, 0.4);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .result-card {
+            background-color: #0f172a;
+            border: 1px solid #38bdf8;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .result-label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            color: #38bdf8;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .result-detail {
+            color: #cbd5e1;
+            font-size: 0.9rem;
+        }
+
+        .summary-panel {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(56, 189, 248, 0.05) 100%);
+            border: 2px solid #38bdf8;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .summary-title {
+            color: #38bdf8;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            color: #cbd5e1;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: #cbd5e1;
+        }
+
+        .summary-value {
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        .flow-chart {
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .flow-chart h3 {
+            color: #38bdf8;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .flow-steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .flow-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .flow-step {
+            background-color: #1e293b;
+            border-left: 4px solid #38bdf8;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .flow-step-title {
+            color: #38bdf8;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .flow-step-value {
+            color: #cbd5e1;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .flow-step-desc {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+
+        .warning {
+            background-color: rgba(248, 113, 113, 0.1);
+            border-left: 4px solid #f87171;
+            padding: 15px;
+            border-radius: 4px;
+            color: #fca5a5;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .success {
+            background-color: rgba(56, 189, 248, 0.1);
+            border-left: 4px solid #38bdf8;
+            padding: 15px;
+            border-radius: 4px;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .calculator {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .calculator h3 {
+            color: #38bdf8;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .value-display {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .value-display .label {
+            color: #cbd5e1;
+            flex: 1;
+        }
+
+        .value-display .amount {
+            color: #38bdf8;
+            font-size: 1.3rem;
+            font-weight: 700;
+            min-width: 200px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏢 SIMULADOR DE FINANCIAMENTO</h1>
+            <p>Vista Ponta Negra - Torre Maré | Calcule seu melhor plano</p>
+        </div>
+
+        <div class="grid">
+            <!-- PAINEL DE ENTRADA (Esquerda) -->
+            <div class="panel">
+                <h2>⚙️ Configurações</h2>
+
+                <div class="form-group">
+                    <label for="unidade">Selecione a Unidade</label>
+                    <select id="unidade">
+                        <option value="">-- Escolha uma unidade --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="entrada">Entrada (R$)</label>
+                    <input type="number" id="entrada" placeholder="50000" min="0" step="1000">
+                </div>
+
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Percentual de Entrada</span>
+                        <span id="percentLabel">10%</span>
+                    </div>
+                    <input type="range" id="percentSlider" min="10" max="50" value="10" step="1">
+                </div>
+
+                <div class="form-group">
+                    <label for="prazo">Prazo CAIXA (meses)</label>
+                    <select id="prazo">
+                        <option value="240">20 anos (240 meses)</option>
+                        <option value="300">25 anos (300 meses)</option>
+                        <option value="360">30 anos (360 meses)</option>
+                        <option value="420" selected>35 anos (420 meses)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="taxa">Taxa Anual (%)</label>
+                    <input type="number" id="taxa" placeholder="10.65" min="5" max="20" step="0.01" value="10.65">
+                </div>
+
+                <div class="form-group">
+                    <label for="parcelas">Parcelas com Construtora (meses)</label>
+                    <input type="number" id="parcelas" placeholder="60" min="12" max="120" step="1" value="60">
+                </div>
+
+                <div class="success">
+                    <strong>💡 Dica:</strong> Ajuste a entrada com o slider ou digitando o valor diretamente para ver como varia seu financiamento.
+                </div>
+            </div>
+
+            <!-- PAINEL DE RESULTADOS (Direita) -->
+            <div class="panel">
+                <h2>📊 Resultados</h2>
+
+                <div id="infoUnidade" style="background-color: #0f172a; padding: 15px; border-left: 4px solid #38bdf8; border-radius: 4px; margin-bottom: 20px;">
+                    <p style="color: #cbd5e1; margin-bottom: 10px;"><strong style="color: #38bdf8;">Unidade Selecionada:</strong></p>
+                    <p style="color: #94a3b8; font-size: 0.9rem;">Selecione uma unidade para ver os detalhes</p>
+                </div>
+
+                <div class="results-grid">
+                    <div class="result-card">
+                        <div class="result-label">Entrada</div>
+                        <div class="result-value" id="resultEntrada">R$ 0</div>
+                        <div class="result-detail" id="resultEntradaPct">0%</div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-label">Financiamento CAIXA</div>
+                        <div class="result-value" id="resultFinanciamento">R$ 0</div>
+                        <div class="result-detail">Máximo 90%</div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-label">1ª Parcela CAIXA</div>
+                        <div class="result-value" id="resultParcela1">R$ 0</div>
+                        <div class="result-detail">Sistema SAC</div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-label">Última Parcela CAIXA</div>
+                        <div class="result-value" id="resultParcelaUltima">R$ 0</div>
+                        <div class="result-detail">Mês 420</div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-label">Parcela Construtora</div>
+                        <div class="result-value" id="resultParcelaConstrutora">R$ 0</div>
+                        <div class="result-detail" id="resultMesesConstrutora">60 meses</div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-label">Total de Juros</div>
+                        <div class="result-value" id="resultJuros">R$ 0</div>
+                        <div class="result-detail">Em 35 anos</div>
+                    </div>
+                </div>
+
+                <div class="warning" id="warningMax" style="display: none;">
+                    ⚠️ A entrada de R$ 0 ultrapassa 90% de financiamento. Ajuste a entrada.
+                </div>
+            </div>
+        </div>
+
+        <!-- FLUXO DE PAGAMENTO -->
+        <div class="flow-chart">
+            <h3>📅 Fluxo de Pagamento</h3>
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <div class="flow-step-title">Fase 1 - Ato</div>
+                    <div class="flow-step-value" id="flowEntrada">R$ 0</div>
+                    <div class="flow-step-desc">Assinatura do contrato</div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-step-title">Fase 2 - Durante a Obra</div>
+                    <div class="flow-step-value" id="flowConstrutora">R$ 0</div>
+                    <div class="flow-step-desc">Até 60 parcelas mensais</div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-step-title">Fase 3 - Pós-Entrega</div>
+                    <div class="flow-step-value" id="flowCaixa">R$ 0</div>
+                    <div class="flow-step-desc">Financiamento (35 anos)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESUMO COMPLETO -->
+        <div class="summary-panel">
+            <div class="summary-title">📋 Resumo Executivo</div>
+            
+            <div class="summary-row">
+                <span class="summary-label">Valor do Imóvel</span>
+                <span class="summary-value" id="summaryValor">R$ 0,00</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Entrada</span>
+                <span class="summary-value" id="summaryEntrada">R$ 0,00</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Financiamento CAIXA (90%)</span>
+                <span class="summary-value" id="summaryFinanciamento">R$ 0,00</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">1ª Parcela Mensal (CAIXA)</span>
+                <span class="summary-value" id="summaryParcela1">R$ 0,00</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Parcela com Construtora</span>
+                <span class="summary-value" id="summaryParcelaConstr">R$ 0,00</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Total de Juros CAIXA</span>
+                <span class="summary-value" id="summaryJuros">R$ 0,00</span>
+            </div>
+            <div class="summary-row" style="border-top: 2px solid #38bdf8; padding-top: 15px; margin-top: 15px;">
+                <span class="summary-label" style="font-weight: 700;">Total Pago (Principal + Juros)</span>
+                <span class="summary-value" style="font-size: 1.4rem;" id="summaryTotal">R$ 0,00</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados das unidades
+        const unidades = [
+            {"id": "a1_2q", "andar": 1, "tipo": "2Q", "preco": 458832, "area": 58.0, "descricao": "Andar 1 - 2Q (58m²) - R$ 458.832"},
+            {"id": "a4_2q", "andar": 4, "tipo": "2Q", "preco": 467832, "area": 58.0, "descricao": "Andar 4 - 2Q (58m²) - R$ 467.832"},
+            {"id": "a4_3q", "andar": 4, "tipo": "3Q", "preco": 634757, "area": 78.85, "descricao": "Andar 4 - 3Q Premium (78,85m²) - R$ 634.757"},
+            {"id": "a5_2q", "andar": 5, "tipo": "2Q", "preco": 470832, "area": 58.0, "descricao": "Andar 5 - 2Q (58m²) - R$ 470.832"},
+            {"id": "a5_3q", "andar": 5, "tipo": "3Q", "preco": 637757, "area": 78.85, "descricao": "Andar 5 - 3Q Premium (78,85m²) - R$ 637.757"},
+            {"id": "a10_2q", "andar": 10, "tipo": "2Q", "preco": 510832, "area": 58.0, "descricao": "Andar 10 - 2Q c/ Terminações (58m²) - R$ 510.832"},
+            {"id": "a10_3q", "andar": 10, "tipo": "3Q", "preco": 677757, "area": 78.85, "descricao": "Andar 10 - 3Q Premium c/ Terminações (78,85m²) - R$ 677.757"},
+            {"id": "a15_2q", "andar": 15, "tipo": "2Q", "preco": 525832, "area": 58.0, "descricao": "Andar 15 - 2Q c/ Terminações (58m²) - R$ 525.832"},
+            {"id": "a15_3q", "andar": 15, "tipo": "3Q", "preco": 692757, "area": 78.85, "descricao": "Andar 15 - 3Q Premium c/ Terminações (78,85m²) - R$ 692.757"},
+            {"id": "a20_2q", "andar": 20, "tipo": "2Q", "preco": 540832, "area": 58.0, "descricao": "Andar 20 - 2Q c/ Terminações (58m²) - R$ 540.832"},
+            {"id": "a20_3q", "andar": 20, "tipo": "3Q", "preco": 707757, "area": 78.85, "descricao": "Andar 20 - 3Q Premium c/ Terminações (78,85m²) - R$ 707.757"},
+            {"id": "a25_2q", "andar": 25, "tipo": "2Q", "preco": 555832, "area": 58.0, "descricao": "Andar 25 - 2Q c/ Terminações (58m²) - R$ 555.832"},
+            {"id": "a25_3q", "andar": 25, "tipo": "3Q", "preco": 722757, "area": 78.85, "descricao": "Andar 25 - 3Q Premium c/ Terminações (78,85m²) - R$ 722.757"},
+            {"id": "a28_2q", "andar": 28, "tipo": "2Q", "preco": 564832, "area": 58.0, "descricao": "Andar 28 - 2Q c/ Terminações (58m²) - R$ 564.832"},
+            {"id": "a28_3q", "andar": 28, "tipo": "3Q", "preco": 731757, "area": 78.85, "descricao": "Andar 28 - 3Q Premium c/ Terminações (78,85m²) - R$ 731.757"},
+        ];
+
+        // Preencher select de unidades
+        const selectUnidade = document.getElementById('unidade');
+        unidades.forEach(unit => {
+            const option = document.createElement('option');
+            option.value = unit.id;
+            option.textContent = unit.descricao;
+            selectUnidade.appendChild(option);
+        });
+
+        // Função para calcular SAC (Sistema de Amortização Constante)
+        function calcularSAC(principal, taxaMensal, numMeses) {
+            const amortizacaoMensal = principal / numMeses;
+            let saldo = principal;
+            let primeiraParc = 0;
+            let ultimaParc = 0;
+            let totalJuros = 0;
+
+            for (let i = 0; i < numMeses; i++) {
+                const juros = saldo * taxaMensal;
+                const parcela = amortizacaoMensal + juros;
+                totalJuros += juros;
+
+                if (i === 0) primeiraParc = parcela;
+                if (i === numMeses - 1) ultimaParc = parcela;
+
+                saldo -= amortizacaoMensal;
+            }
+
+            return {
+                primeiraParc,
+                ultimaParc,
+                totalJuros,
+                totalPago: principal + totalJuros
+            };
+        }
+
+        // Função para formatar moeda
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor);
+        }
+
+        // Função principal de cálculo
+        function calcular() {
+            const unidadeId = document.getElementById('unidade').value;
+            if (!unidadeId) {
+                document.getElementById('infoUnidade').innerHTML = '<p style="color: #94a3b8; font-size: 0.9rem;">Selecione uma unidade para ver os detalhes</p>';
+                limparResultados();
+                return;
+            }
+
+            const unidade = unidades.find(u => u.id === unidadeId);
+            const entrada = parseFloat(document.getElementById('entrada').value) || 0;
+            const prazo = parseInt(document.getElementById('prazo').value);
+            const taxa = parseFloat(document.getElementById('taxa').value) / 100 / 12;
+            const parcelas = parseInt(document.getElementById('parcelas').value);
+
+            const valorImovel = unidade.preco;
+            const financiamentoPedido = valorImovel - entrada;
+            const maxFinanciamento = valorImovel * 0.90;
+            const financiamentoCaixa = Math.min(financiamentoPedido, maxFinanciamento);
+            const dividaConstrutora = financiamentoPedido - financiamentoCaixa;
+
+            // Validar
+            let temErro = false;
+            if (entrada < 0) {
+                document.getElementById('warningMax').style.display = 'block';
+                document.getElementById('warningMax').textContent = '⚠️ A entrada não pode ser negativa.';
+                temErro = true;
+            } else if (financiamentoPedido < 0) {
+                document.getElementById('warningMax').style.display = 'block';
+                document.getElementById('warningMax').textContent = '⚠️ A entrada não pode ser maior que o valor do imóvel.';
+                temErro = true;
+            } else {
+                document.getElementById('warningMax').style.display = 'none';
+            }
+
+            if (temErro) {
+                limparResultados();
+                return;
+            }
+
+            // Calcular SAC
+            const sac = calcularSAC(financiamentoCaixa, taxa, prazo);
+            const parcelaConstrutora = dividaConstrutora > 0 ? dividaConstrutora / parcelas : 0;
+
+            // Atualizar info da unidade
+            document.getElementById('infoUnidade').innerHTML = `
+                <p style="color: #cbd5e1; margin-bottom: 5px;"><strong style="color: #38bdf8;">📍 ${unidade.descricao}</strong></p>
+                <p style="color: #94a3b8; font-size: 0.85rem; margin: 3px 0;">Andar ${unidade.andar} | ${unidade.tipo} | ${unidade.area}m² privativa</p>
+            `;
+
+            // Atualizar cards de resultados
+            document.getElementById('resultEntrada').textContent = formatarMoeda(entrada);
+            document.getElementById('resultEntradaPct').textContent = ((entrada / valorImovel) * 100).toFixed(1) + '%';
+            document.getElementById('resultFinanciamento').textContent = formatarMoeda(financiamentoCaixa);
+            document.getElementById('resultParcela1').textContent = formatarMoeda(sac.primeiraParc);
+            document.getElementById('resultParcelaUltima').textContent = formatarMoeda(sac.ultimaParc);
+            document.getElementById('resultParcelaConstrutora').textContent = formatarMoeda(parcelaConstrutora);
+            document.getElementById('resultMesesConstrutora').textContent = parcelas + ' meses';
+            document.getElementById('resultJuros').textContent = formatarMoeda(sac.totalJuros);
+
+            // Atualizar fluxo
+            document.getElementById('flowEntrada').textContent = formatarMoeda(entrada);
+            document.getElementById('flowConstrutora').textContent = formatarMoeda(parcelaConstrutora) + ' x ' + parcelas;
+            document.getElementById('flowCaixa').textContent = formatarMoeda(sac.primeiraParc) + ' (inicial)';
+
+            // Atualizar resumo
+            document.getElementById('summaryValor').textContent = formatarMoeda(valorImovel);
+            document.getElementById('summaryEntrada').textContent = formatarMoeda(entrada);
+            document.getElementById('summaryFinanciamento').textContent = formatarMoeda(financiamentoCaixa);
+            document.getElementById('summaryParcela1').textContent = formatarMoeda(sac.primeiraParc);
+            document.getElementById('summaryParcelaConstr').textContent = formatarMoeda(parcelaConstrutora);
+            document.getElementById('summaryJuros').textContent = formatarMoeda(sac.totalJuros);
+            document.getElementById('summaryTotal').textContent = formatarMoeda(sac.totalPago);
+        }
+
+        function limparResultados() {
+            const campos = ['resultEntrada', 'resultEntradaPct', 'resultFinanciamento', 'resultParcela1', 'resultParcelaUltima', 'resultParcelaConstrutora', 'resultJuros'];
+            campos.forEach(id => {
+                if (id === 'resultEntradaPct') {
+                    document.getElementById(id).textContent = '0%';
+                } else {
+                    document.getElementById(id).textContent = 'R$ 0';
+                }
+            });
+
+            document.getElementById('flowEntrada').textContent = 'R$ 0';
+            document.getElementById('flowConstrutora').textContent = 'R$ 0';
+            document.getElementById('flowCaixa').textContent = 'R$ 0';
+
+            const sumCampos = ['summaryValor', 'summaryEntrada', 'summaryFinanciamento', 'summaryParcela1', 'summaryParcelaConstr', 'summaryJuros', 'summaryTotal'];
+            sumCampos.forEach(id => {
+                document.getElementById(id).textContent = 'R$ 0,00';
+            });
+        }
+
+        // Event Listeners
+        document.getElementById('unidade').addEventListener('change', () => {
+            const unidadeId = document.getElementById('unidade').value;
+            if (unidadeId) {
+                const unidade = unidades.find(u => u.id === unidadeId);
+                const entradaPadrao = Math.round(unidade.preco * 0.1);
+                document.getElementById('entrada').value = entradaPadrao;
+                document.getElementById('percentSlider').value = 10;
+                document.getElementById('percentLabel').textContent = '10%';
+                calcular();
+            }
+        });
+
+        document.getElementById('entrada').addEventListener('input', () => {
+            const entrada = parseFloat(document.getElementById('entrada').value) || 0;
+            const unidadeId = document.getElementById('unidade').value;
+            if (unidadeId) {
+                const unidade = unidades.find(u => u.id === unidadeId);
+                const pct = (entrada / unidade.preco) * 100;
+                document.getElementById('percentSlider').value = Math.min(pct, 50);
+                document.getElementById('percentLabel').textContent = pct.toFixed(1) + '%';
+            }
+            calcular();
+        });
+
+        document.getElementById('percentSlider').addEventListener('input', (e) => {
+            const pct = parseInt(e.target.value);
+            const unidadeId = document.getElementById('unidade').value;
+            if (unidadeId) {
+                const unidade = unidades.find(u => u.id === unidadeId);
+                const entrada = (unidade.preco * pct) / 100;
+                document.getElementById('entrada').value = Math.round(entrada);
+                document.getElementById('percentLabel').textContent = pct + '%';
+            }
+            calcular();
+        });
+
+        document.getElementById('prazo').addEventListener('change', calcular);
+        document.getElementById('taxa').addEventListener('input', calcular);
+        document.getElementById('parcelas').addEventListener('input', calcular);
+    </script>
+</body>
+</html>
