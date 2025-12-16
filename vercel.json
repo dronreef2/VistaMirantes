@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "name": "vista-ponta-negra-simulador",
+  "builds": [
+    {
+      "src": "simulador_vista_ponta_negra.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/simulador_vista_ponta_negra.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/simulador_vista_ponta_negra.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
+    }
+  ]
+}
