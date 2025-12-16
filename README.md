@@ -77,7 +77,7 @@ vercel --prod
 3. Em **Source**, selecione a branch `main`
 4. Clique em **Save**
 5. Aguarde alguns minutos
-6. Acesse: `https://seu-usuario.github.io/VistaMirantes/simulador_vista_ponta_negra.html`
+6. Acesse: `https://seu-usuario.github.io/nome-do-repositorio/simulador_vista_ponta_negra.html`
 
 #### 🟠 **Firebase Hosting** (Google)
 
